@@ -13,11 +13,11 @@
 #include <pthread.h>
 
 #define MIN 0
-#define MAX 100
+#define MAX 30
 
 typedef struct {
     pthread_t thread;
-    int presion;
+    int temperatura;
     pthread_mutex_t mutex;
     int periodo;
 }Deposito;
@@ -74,16 +74,16 @@ void* deposito1(void* arg){
     while(true){
         while(clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ispec, NULL) == EINTR);
         pthread_mutex_lock(&c->dep1.mutex);
-        c->dep1.presion = generateRandom(&c->random);
-        if(c->dep1.presion < 0.2 * MAX ){
-            printf("[D1] Activacion de alarmas presion baja\n");
+        c->dep1.temperatura = generateRandom(&c->random);
+        if(c->dep1.temperatura < 0.8 * MAX ){
+            printf("[D1] Temperatura optima\n");
         }
-        else if(c->dep1.presion < 0.9 * MAX){
-            printf("[D1] Presion optima\n");
+        else if(c->dep1.temperatura <= 0.9 * MAX){
+            printf("[D1] Temperatura Alta\n");
         }
 
         else{
-            printf("[D1] Alarma: Necesario apertura\n");
+            printf("[D1] Temperatura extrema\n");
         }
 
         pthread_mutex_unlock(&c->dep1.mutex);
@@ -100,16 +100,16 @@ void* deposito2(void* arg){
     while(true){
         while(clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ispec, NULL) == EINTR);
         pthread_mutex_lock(&c->dep2.mutex);
-        c->dep2.presion = generateRandom(&c->random);
-        if(c->dep2.presion < 0.2 * MAX ){
-            printf("[D2] Activacion de alarmas presion baja\n");
+        c->dep2.temperatura = generateRandom(&c->random);
+        if(c->dep2.temperatura < 0.8 * MAX ){
+            printf("[D2] Temperatura optima\n");
         }
-        else if(c->dep2.presion < 0.9 * MAX){
-            printf("[D2] Presion optima\n");
+        else if(c->dep2.temperatura <= 0.9 * MAX){
+            printf("[D2] Temperatura Alta\n");
         }
 
         else{
-            printf("[D2] Alarma: Necesario apertura\n");
+            printf("[D2] Temperatura extrema\n");
         }
 
         pthread_mutex_unlock(&c->dep2.mutex);
@@ -127,11 +127,11 @@ void* monitor(void* arg){
         while(clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ispec, NULL) == EINTR);
 
         pthread_mutex_lock(&c->dep1.mutex);
-        printf("[D1] Presion = %d \n",c->dep1.presion);
+        printf("[D1] TEMPERATURA = %d \n",c->dep1.temperatura);
         pthread_mutex_unlock(&c->dep1.mutex);
 
         pthread_mutex_lock(&c->dep2.mutex);
-        printf("[D2] Presion = %d \n",c->dep2.presion);
+        printf("[D2] TEMPERATURA = %d \n",c->dep2.temperatura);
         pthread_mutex_unlock(&c->dep2.mutex);
 
         ispec.tv_sec += c->periodo;
